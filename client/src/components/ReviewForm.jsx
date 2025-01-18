@@ -107,7 +107,7 @@ function ReviewForm({ setGeneratedReview }) {
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl p-8"
+      className="bg-gray-900/50 backdrop-blur-xl rounded-2xl shadow-xl p-8 border border-gray-800"
     >
       <motion.div
         initial={{ opacity: 0 }}
@@ -115,19 +115,19 @@ function ReviewForm({ setGeneratedReview }) {
         transition={{ delay: 0.2 }}
         className="text-center mb-8"
       >
-        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
+        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
           Generate Your Funny Review
         </h2>
-        <p className="text-gray-600 mt-2">Fill in your details below ✨</p>
+        <p className="text-gray-400 mt-2">Fill in your details below ✨</p>
       </motion.div>
 
       {error && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-md"
+          className="mb-6 p-4 bg-red-900/50 border-l-4 border-red-500 rounded-r-md"
         >
-          <p className="text-red-700">{error}</p>
+          <p className="text-red-400">{error}</p>
         </motion.div>
       )}
 
@@ -137,7 +137,7 @@ function ReviewForm({ setGeneratedReview }) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Your Name
           </label>
           <input
@@ -145,7 +145,7 @@ function ReviewForm({ setGeneratedReview }) {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300"
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border-2 border-gray-700 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 text-white placeholder-gray-400 transition-all duration-300"
             placeholder="Enter your name"
           />
         </motion.div>
@@ -155,7 +155,7 @@ function ReviewForm({ setGeneratedReview }) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Study Stream
           </label>
           <div className="relative">
@@ -163,7 +163,7 @@ function ReviewForm({ setGeneratedReview }) {
               name="studyStream"
               value={formData.studyStream}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300 appearance-none"
+              className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border-2 border-gray-700 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 text-white transition-all duration-300 appearance-none"
             >
               <option value="">Select your stream</option>
               {studyStreams.map(stream => (
@@ -185,7 +185,7 @@ function ReviewForm({ setGeneratedReview }) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Hobbies (comma-separated)
           </label>
           <input
@@ -193,7 +193,7 @@ function ReviewForm({ setGeneratedReview }) {
             name="hobbies"
             value={formData.hobbies}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300"
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border-2 border-gray-700 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 text-white placeholder-gray-400 transition-all duration-300"
             placeholder="e.g., gaming, reading, sports"
           />
         </motion.div>
@@ -203,7 +203,7 @@ function ReviewForm({ setGeneratedReview }) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Fun Facts About You
           </label>
           <textarea
@@ -211,7 +211,7 @@ function ReviewForm({ setGeneratedReview }) {
             value={formData.funFacts}
             onChange={handleChange}
             rows="3"
-            className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300 resize-none"
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border-2 border-gray-700 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 text-white placeholder-gray-400 transition-all duration-300 resize-none"
             placeholder="Tell us something interesting about yourself!"
           />
         </motion.div>

@@ -3,18 +3,32 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import ReviewForm from './components/ReviewForm';
 import ReviewDisplay from './components/ReviewDisplay';
-import BackgroundAnimation from './components/BackgroundAnimation';
+import ParallaxStars from './components/ParallaxStars';
 import GraduationCap from './components/GraduationCap';
 import AnimatedCard from './components/AnimatedCard';
+import GlowingButton from './components/GlowingButton';
+import FloatingText from './components/FloatingText';
 import ReactConfetti from 'react-confetti';
 
 function App() {
   const [generatedReview, setGeneratedReview] = useState(null);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const { ref: headerRef, inView: headerInView } = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = window.scrollY / totalScroll;
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleReviewGenerated = (review) => {
     setGeneratedReview(review);
@@ -23,11 +37,20 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 relative overflow-hidden">
-      <BackgroundAnimation />
+    <div className="min-h-screen bg-[#0a0a0a] text-white relative overflow-hidden">
+      <ParallaxStars />
+      
+      {/* Progress Bar */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 z-50"
+        style={{ scaleX: scrollProgress }}
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: scrollProgress }}
+        transition={{ duration: 0.1 }}
+      />
       
       {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-md shadow-md fixed w-full z-50">
+      <nav className="bg-black/50 backdrop-blur-xl border-b border-gray-800/50 fixed w-full z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <motion.div
             initial={{ y: -20, opacity: 0 }}
@@ -35,18 +58,15 @@ function App() {
             transition={{ duration: 0.5 }}
             className="flex justify-between items-center"
           >
-            <motion.h1 
-              className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Student Fun Review
-            </motion.h1>
+            <FloatingText
+              text="Student Fun Review"
+              className="text-3xl font-bold"
+            />
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="text-lg font-medium text-gray-500"
+              className="text-lg font-medium text-gray-300"
             >
-              Make Learning Fun! 🎓
+              <FloatingText text="Make Learning Fun! 🎓" delay={0.5} />
             </motion.div>
           </motion.div>
         </div>
@@ -62,34 +82,57 @@ function App() {
       >
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="text-center md:text-left">
-              <motion.h2
+            <div className="text-center md:text-left space-y-6">
+              <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: headerInView ? 0 : 20, opacity: headerInView ? 1 : 0 }}
                 transition={{ delay: 0.2, duration: 0.6 }}
-                className="text-5xl md:text-6xl font-extrabold mb-4"
+                className="text-5xl md:text-6xl font-extrabold"
               >
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600">
-                  Get Your Funny
-                </span>
-                <br />
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
-                  Student Review!
-                </span>
-              </motion.h2>
+                <FloatingText text="Get Your Funny" />
+                <FloatingText text="Student Review!" delay={0.3} />
+              </motion.div>
+              
               <motion.p
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: headerInView ? 0 : 20, opacity: headerInView ? 1 : 0 }}
                 transition={{ delay: 0.4, duration: 0.6 }}
-                className="text-xl text-gray-600 mb-8"
+                className="text-xl text-gray-300"
               >
                 Fill in your details and we'll generate a hilarious review just for you!
               </motion.p>
+
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: headerInView ? 0 : 20, opacity: headerInView ? 1 : 0 }}
+                transition={{ delay: 0.6, duration: 0.6 }}
+              >
+                <GlowingButton
+                  onClick={() => document.getElementById('review-form').scrollIntoView({ behavior: 'smooth' })}
+                  className="text-white"
+                >
+                  Get Started
+                  <motion.span
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1, repeat: Infinity }}
+                  >
+                    →
+                  </motion.span>
+                </GlowingButton>
+              </motion.div>
             </div>
+            
             <div className="hidden md:block">
               <GraduationCap />
             </div>
           </div>
+        </div>
+
+        {/* Animated Circles Background */}
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full filter blur-3xl animate-blob" />
+          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-pink-500/20 rounded-full filter blur-3xl animate-blob animation-delay-2000" />
+          <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-blue-500/20 rounded-full filter blur-3xl animate-blob animation-delay-4000" />
         </div>
       </motion.div>
 
@@ -98,6 +141,7 @@ function App() {
         <div className="grid md:grid-cols-2 gap-8">
           {/* Form Section */}
           <motion.div
+            id="review-form"
             initial={{ x: -50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.6 }}
@@ -129,16 +173,16 @@ function App() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8 }}
-        className="bg-white/80 backdrop-blur-md py-8 mt-12"
+        className="bg-black/50 backdrop-blur-xl border-t border-gray-800/50 py-8 mt-12"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <p className="text-lg text-gray-600">Made with ❤️ for students everywhere</p>
+            <FloatingText text="Made with ❤️ for students everywhere" />
             <div className="mt-4 flex justify-center space-x-4">
               <motion.a
-                whileHover={{ scale: 1.1 }}
+                whileHover={{ scale: 1.1, y: -2 }}
                 whileTap={{ scale: 0.9 }}
-                className="text-gray-400 hover:text-gray-500"
+                className="text-gray-400 hover:text-purple-400 transition-colors"
                 href="#"
               >
                 <span className="sr-only">Twitter</span>
@@ -147,9 +191,9 @@ function App() {
                 </svg>
               </motion.a>
               <motion.a
-                whileHover={{ scale: 1.1 }}
+                whileHover={{ scale: 1.1, y: -2 }}
                 whileTap={{ scale: 0.9 }}
-                className="text-gray-400 hover:text-gray-500"
+                className="text-gray-400 hover:text-purple-400 transition-colors"
                 href="#"
               >
                 <span className="sr-only">GitHub</span>
@@ -170,6 +214,7 @@ function App() {
           recycle={false}
           numberOfPieces={200}
           gravity={0.2}
+          colors={['#9333EA', '#EC4899', '#818CF8', '#38BDF8']}
         />
       )}
     </div>
