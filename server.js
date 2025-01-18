@@ -9,9 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? 'https://student-funny-reviewer.vercel.app'
-        : 'http://localhost:5173',
+    origin: ['https://student-funny-reviewer.vercel.app', 'http://localhost:5173'],
     methods: ['GET', 'POST', 'DELETE'],
     credentials: true
 }));
