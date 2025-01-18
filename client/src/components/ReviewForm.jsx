@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 import axios from 'axios';
 import config from '../config';
 
@@ -21,6 +22,10 @@ function ReviewForm({ setGeneratedReview }) {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
 
   const validateForm = () => {
     if (!formData.name.trim()) {
@@ -81,108 +86,132 @@ function ReviewForm({ setGeneratedReview }) {
     });
   };
 
+  const formVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const inputVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.3 }
+    }
+  };
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="max-w-2xl mx-auto"
+      ref={ref}
+      initial="hidden"
+      animate={inView ? "visible" : "hidden"}
+      variants={formVariants}
+      className="bg-white/80 backdrop-blur-md rounded-xl shadow-xl p-8 transform hover:scale-[1.02] transition-transform duration-300"
     >
-      <form onSubmit={handleSubmit} className="bg-white shadow-xl rounded-lg p-8">
-        <div className="space-y-6">
-          {/* Name Input */}
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-              Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              id="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
-              placeholder="Enter your name"
-            />
-          </div>
+      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
+        Generate Your Funny Review
+      </h2>
+      
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4 p-3 bg-red-100 text-red-700 rounded-md"
+        >
+          {error}
+        </motion.div>
+      )}
 
-          {/* Study Stream Dropdown */}
-          <div>
-            <label htmlFor="studyStream" className="block text-sm font-medium text-gray-700">
-              Study Stream
-            </label>
-            <select
-              name="studyStream"
-              id="studyStream"
-              value={formData.studyStream}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
-            >
-              <option value="">Select your stream</option>
-              {studyStreams.map(stream => (
-                <option key={stream} value={stream}>{stream}</option>
-              ))}
-            </select>
-          </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <motion.div variants={inputVariants}>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 rounded-md border-2 border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300"
+            placeholder="Enter your name"
+          />
+        </motion.div>
 
-          {/* Hobbies Input */}
-          <div>
-            <label htmlFor="hobbies" className="block text-sm font-medium text-gray-700">
-              Hobbies (comma-separated)
-            </label>
-            <input
-              type="text"
-              name="hobbies"
-              id="hobbies"
-              value={formData.hobbies}
-              onChange={handleChange}
-              placeholder="e.g., gaming, reading, music"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
-            />
-          </div>
-
-          {/* Fun Facts Textarea */}
-          <div>
-            <label htmlFor="funFacts" className="block text-sm font-medium text-gray-700">
-              Fun Facts About You
-            </label>
-            <textarea
-              name="funFacts"
-              id="funFacts"
-              rows={4}
-              value={formData.funFacts}
-              onChange={handleChange}
-              placeholder="Share some interesting facts about yourself!"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
-            />
-          </div>
-
-          {error && (
-            <div className="bg-red-50 border-l-4 border-red-400 p-4">
-              <p className="text-red-700 text-sm">{error}</p>
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors ${
-              loading ? 'opacity-50 cursor-not-allowed bg-gray-400' : 'bg-indigo-600 hover:bg-indigo-700'
-            }`}
+        <motion.div variants={inputVariants}>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Study Stream</label>
+          <select
+            name="studyStream"
+            value={formData.studyStream}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 rounded-md border-2 border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300"
           >
-            {loading ? (
-              <span className="flex items-center">
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Generating...
-              </span>
-            ) : (
-              'Generate Funny Review'
-            )}
-          </button>
-        </div>
+            <option value="">Select your stream</option>
+            {studyStreams.map(stream => (
+              <option key={stream} value={stream}>{stream}</option>
+            ))}
+          </select>
+        </motion.div>
+
+        <motion.div variants={inputVariants}>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Hobbies (comma-separated)
+          </label>
+          <input
+            type="text"
+            name="hobbies"
+            value={formData.hobbies}
+            onChange={handleChange}
+            required
+            placeholder="e.g., gaming, reading, sports"
+            className="w-full px-4 py-2 rounded-md border-2 border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300"
+          />
+        </motion.div>
+
+        <motion.div variants={inputVariants}>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Fun Facts About You</label>
+          <textarea
+            name="funFacts"
+            value={formData.funFacts}
+            onChange={handleChange}
+            required
+            rows="3"
+            placeholder="Tell us something interesting about yourself!"
+            className="w-full px-4 py-2 rounded-md border-2 border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300 resize-none"
+          />
+        </motion.div>
+
+        <motion.button
+          variants={inputVariants}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          type="submit"
+          disabled={loading}
+          className={`w-full py-3 px-6 rounded-md text-white font-medium 
+            ${loading 
+              ? 'bg-gray-400 cursor-not-allowed' 
+              : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+            } 
+            transform transition-all duration-300 shadow-md hover:shadow-lg`}
+        >
+          {loading ? (
+            <div className="flex items-center justify-center">
+              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Generating...
+            </div>
+          ) : (
+            'Generate Funny Review'
+          )}
+        </motion.button>
       </form>
     </motion.div>
   );
