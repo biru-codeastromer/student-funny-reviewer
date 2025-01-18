@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import config from '../config';
 
 const studyStreams = [
   'Computer Science',
@@ -54,7 +55,7 @@ function ReviewForm({ setGeneratedReview }) {
     try {
       const hobbiesArray = formData.hobbies.split(',').map(hobby => hobby.trim());
       
-      const response = await axios.post('http://localhost:3000/api/generate-review', {
+      const response = await axios.post(`${config.apiUrl}/api/generate-review`, {
         ...formData,
         hobbies: hobbiesArray
       });
