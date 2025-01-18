@@ -35,7 +35,7 @@ A fun web application that generates humorous reviews based on student informati
 2. Create a `.env` file with the following variables:
    ```
    MONGODB_URI=mongodb://localhost:27017/student-reviews
-   PORT=5000
+   PORT=3000
    ```
 
 3. Start the server:
