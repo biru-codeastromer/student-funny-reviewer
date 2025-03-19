@@ -7,7 +7,6 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(cors({
     origin: ['https://student-funny-reviewer.vercel.app', 'http://localhost:5173'],
     methods: ['GET', 'POST', 'DELETE'],
@@ -15,7 +14,6 @@ app.use(cors({
 }));
 app.use(bodyParser.json());
 
-// Database configuration
 const sequelize = new Sequelize(process.env.DATABASE_URL || 'postgres://localhost:5432/student_reviews', {
     dialect: 'postgres',
     dialectOptions: {
@@ -26,7 +24,6 @@ const sequelize = new Sequelize(process.env.DATABASE_URL || 'postgres://localhos
     }
 });
 
-// Review Model
 const Review = sequelize.define('Review', {
     name: {
         type: DataTypes.STRING,
@@ -50,11 +47,9 @@ const Review = sequelize.define('Review', {
     }
 });
 
-// Generate funny review based on inputs
 function generateFunnyReview(name, studyStream, hobbies, funFacts) {
     let review = `Dear ${name}, `;
     
-    // Study stream based jokes
     const streamJokes = {
         'Computer Science': "You're probably debugging your life more than your code! ",
         'Engineering': "Engineering your way through life, one problem at a time! ",
@@ -65,7 +60,6 @@ function generateFunnyReview(name, studyStream, hobbies, funFacts) {
 
     review += streamJokes[studyStream] || "Breaking stereotypes and making history! ";
 
-    // Hobby based jokes
     if (hobbies.some(hobby => hobby.toLowerCase().includes('gaming'))) {
         review += " Your gaming skills are probably better than your exam scores! ";
     }
@@ -76,7 +70,6 @@ function generateFunnyReview(name, studyStream, hobbies, funFacts) {
         review += " Your commit history is longer than your study history! ";
     }
 
-    // Random funny conclusions
     const conclusions = [
         "Keep being awesome, just maybe with less caffeine! ",
         "You're living proof that sleep is optional in college! ",
@@ -89,7 +82,6 @@ function generateFunnyReview(name, studyStream, hobbies, funFacts) {
     return review;
 }
 
-// API Routes
 app.post('/api/generate-review', async (req, res) => {
     try {
         const { name, studyStream, hobbies, funFacts } = req.body;
@@ -144,7 +136,6 @@ app.delete('/api/reviews/:id', async (req, res) => {
     }
 });
 
-// Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ 
@@ -153,7 +144,6 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Start server and sync database
 async function startServer() {
     try {
         await sequelize.sync();
